@@ -4,7 +4,8 @@ import Button  from './src/components/button';
 import { styles } from './app.style'; 
 import { currencies } from './src/constants/currencies';
 import { Input } from './src/components/input';
-
+import { colors } from './src/styles/colors';
+import { ResutlCard } from './src/resultCard';
 
 export default function App() {
   return (
@@ -39,13 +40,32 @@ export default function App() {
 
         <Input label="Valor: "/>
 
-        <TouchableOpacity>
-           <Text>
+        <TouchableOpacity style={styles.swapButton}>
+           <Text style={styles.swapButtonText}>
              ↑↓
            </Text>
         </TouchableOpacity>
-        
+
+        <Text style={styles.label}>Para: </Text>
+        <View style={styles.currencyGrif}>
+            {currencies.map(currency => (
+              <Button variant='secondary'
+                 key={currency.code}
+                 currency={currency}
+              >
+
+              </Button>
+            ))}
+        </View>
        </View>
+
+        <TouchableOpacity style={styles.convertButton}>
+          <Text style={styles.swapButtonText}>
+            Converter
+          </Text>
+        </TouchableOpacity>
+
+        <ResutlCard />
       </View>
     </ScrollView>
   </KeyboardAvoidingView>
