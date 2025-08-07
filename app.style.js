@@ -46,7 +46,16 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         marginHorizontal: -4,
-        marginBottom: 16,
+        marginBottom: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
         
+    },
+    swapButton: {
+        backgroundColor: colors.primary,
+        paddingVertical: 16,
+        paddingHorizontal: 24,
+        borderRadius: 12,
+        marginBottom: 24,
     }
 })
