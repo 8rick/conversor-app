@@ -21,8 +21,9 @@ export default function App() {
   
 
  async function fetchExchangeRate(){
-  const data = await  exchangeRateApi('BRL')
-  console.log(data)
+  const data = await  exchangeRateApi(fromCurrency)
+  const rate = data.rates[toCurrency];
+  console.log(rate * amount);
   }
 
   return (
@@ -49,6 +50,7 @@ export default function App() {
                  key={currency.code}
                  currency={currency}
                  onPress={() => setFromCurrency(currency.code)}
+                 isSelected={fromCurrency === currency.code}
               >
 
               </Button>
@@ -56,7 +58,7 @@ export default function App() {
 
         </View>
 
-        <Input label="Valor: "/>
+        <Input label="Valor: " value={amount} onChangeText={setAmount}/>
 
         <TouchableOpacity style={styles.swapButton}>
            <Text style={styles.swapButtonText}>
@@ -69,7 +71,7 @@ export default function App() {
             {currencies.map(currency => (
               <Button variant='secondary'
                  key={currency.code}
-                 currency={currency}
+                 currency={currency}  
                  onPress={()=> setToCurrency(currency.code)}
                  isSelected={toCurrency === currency.code}
               >
