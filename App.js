@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Platform, ScrollView } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Platform, ScrollView, SafeAreaView, ActivityIndicator } from 'react-native';
 import Button  from './src/components/button';
 import { styles } from './app.style'; 
 import { currencies } from './src/constants/currencies';
@@ -8,6 +8,7 @@ import { colors } from './src/styles/colors';
 import { ResutlCard } from './src/resultCard';
 import { exchangeRateApi } from './src/services/api';
 import { useState } from 'react';
+import { convertCurrency } from './src/utils/convertCurrency';
 
 export default function App() {
   const [amount, setAmount] = useState('');
@@ -15,19 +16,35 @@ export default function App() {
   const [toCurrency, setToCurrency] = useState('BRL');
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
-  const [exchagerate, setExchagerate] = useState(null);
+  const [exchangeRate, setExchagerate] = useState(null);
 
 
   
 
  async function fetchExchangeRate(){
-  const data = await  exchangeRateApi(fromCurrency)
-  const rate = data.rates[toCurrency];
-  console.log(rate * amount);
+
+ try{
+  setLoading(true);
+  if(!amount) return
+
+   const data = await  exchangeRateApi(fromCurrency)
+   const rate = data.rates[toCurrency];
+   setExchagerate(rate);
+
+
+   const ConvertedAmount = convertCurrency(amount, rate);
+
+    setResult(ConvertedAmount);
+  } catch(error){
+    alert('Erro, tente novamente')
+  } finally{
+    setLoading(false);
   }
 
-  return (
+}
 
+  return (
+ 
   <KeyboardAvoidingView
      style={styles.container}
      behavior={Platform.OS === 'ios' ? 'padding' : 'height' }
@@ -82,18 +99,30 @@ export default function App() {
        </View>
 
         <TouchableOpacity 
-        style={styles.convertButton}
+        style={[styles.convertButton, (!amount || loading) && styles.convertButtonDisabled]}
         onPress={fetchExchangeRate}
+        disabled={!amount || loading}
         >
+          {loading ?  ( 
+            <ActivityIndicator color="white" />
+          ) : (
           <Text style={styles.swapButtonText}>
             Converter
           </Text>
+        )}
         </TouchableOpacity>
 
-        <ResutlCard />
+        <ResutlCard 
+          exchangeRate={exchangeRate}
+          result={result}
+          fromCurrency={fromCurrency}
+          toCurrency={toCurrency}
+          currencies={currencies}
+        />
       </View>
     </ScrollView>
   </KeyboardAvoidingView>
+  
   );
 }
 
